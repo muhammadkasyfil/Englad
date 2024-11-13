@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level 2 Quiz - EngLad</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/level2.css">
+</head>
+<body class="bg-[#0f172a] text-white">
+    <header class="py-4 bg-[#1e293b]">
+        <nav class="container mx-auto flex justify-between items-center px-4">
+            <h1 class="text-2xl font-bold">EngLad</h1>
+            <ul class="flex space-x-4">
+                <li><a href="index.html" class="hover:text-[#FBBF24]">Home</a></li>
+                <li><a href="course.html" class="hover:text-[#FBBF24]">Course</a></li>
+                <li><a href="videos.html" class="hover:text-[#FBBF24]">Videos</a></li>
+                <li><a href="profile.html" class="hover:text-[#FBBF24]">Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container mx-auto mt-10 px-4">
+        <div class="bg-[#1e293b] p-6 rounded-lg shadow-lg">
+            <div id="progress-bar-container" class="mb-6">
+                <div class="bg-gray-700 h-3 rounded-full">
+                    <div id="progress-bar" class="bg-[#10B981] h-3 rounded-full" style="width: 0%;"></div>
+                </div>
+            </div>
+            <h2 id="question" class="text-2xl font-bold mb-4 text-center">Loading question...</h2>
+
+            <div id="drag-options" class="grid grid-cols-2 gap-4 mb-4 text-center">
+                <!-- Drag items will be injected here by JavaScript -->
+            </div>
+
+            <div id="drop-area" class="drop-area bg-[#1e293b] border-2 border-gray-600 border-dashed p-4 rounded-lg text-gray-400 text-center">
+                Drop your answer here
+            </div>
+        </div>
+    </main>
+
+    <div id="result-container" class="container mx-auto mt-10 px-4 bg-[#1e293b] p-6 rounded-lg shadow-lg" style="display:none;">
+        <h2 class="text-2xl font-bold mb-4 text-center">Quiz Completed!</h2>
+        <p id="result-text" class="text-center mb-4"></p>
+        <div class="flex justify-center space-x-4">
+            <button id="restart-level" class="bg-[#F59E0B] hover:bg-[#FBBF24] text-white font-bold py-2 px-6 rounded">Retry Level</button>
+            <button id="go-to-course" class="bg-[#1d4ed8] hover:bg-[#3b82f6] text-white font-bold py-2 px-6 rounded">Go to Course</button>
+        </div>
+    </div>
+
+    <footer class="mt-10 bg-[#1e293b] py-4 text-center">
+        <p class="text-gray-400">&copy; 2024 EngLad. All Rights Reserved.</p>
+    </footer>
+
+    <script src="js/level2.js"></script>
+</body>
+</html>

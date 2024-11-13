@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Level 1 Quiz Page - EngLad">
+    <title>Level 1 Quiz - EngLad</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/level1.css">
+</head>
+
+<body class="bg-[#0f172a] text-white">
+    <header class="py-4 bg-[#1e293b]">
+        <nav class="container mx-auto flex justify-between items-center px-4">
+            <h1 class="text-2xl font-bold">EngLad</h1>
+            <ul class="flex space-x-4">
+                <li><a href="index.html" class="hover:text-[#FBBF24]">Home</a></li>
+                <li><a href="course.html" class="hover:text-[#FBBF24]">Course</a></li>
+                <li><a href="videos.html" class="hover:text-[#FBBF24]">Videos</a></li>
+                <li><a href="profile.html" class="hover:text-[#FBBF24]">Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container mx-auto mt-10 px-4">
+        <div class="bg-[#1e293b] p-6 rounded-lg shadow-lg">
+            <div id="progress-bar-container" class="mb-6">
+                <div class="bg-gray-700 h-3 rounded-full">
+                    <div id="progress-bar" class="bg-[#10B981] h-3 rounded-full" style="width: 0%;"></div>
+                </div>
+            </div>
+            <div id="question-container">
+                <h2 id="question" class="text-2xl font-bold mb-4"></h2>
+                <div id="answer-buttons" class="space-y-2"></div>
+                <button id="submit-btn" class="mt-4 bg-[#10B981] hover:bg-[#34D399] text-white font-bold py-2 px-6 rounded" disabled>Submit</button>
+            </div>
+            <div id="next-button-container" class="mt-4" style="display: none;">
+                <!-- Next button will be dynamically added by the JS -->
+            </div>
+            <div id="result-container" class="mt-6" style="display: none;">
+                <h3 id="result-text" class="text-2xl font-bold mb-4"></h3>
+                <button onclick="restartLevel()" class="bg-[#F59E0B] hover:bg-[#FBBF24] text-white font-bold py-2 px-6 rounded">Retry</button>
+                <button onclick="goToCoursePage()" class="mt-4 bg-[#1d4ed8] hover:bg-[#3b82f6] text-white font-bold py-2 px-6 rounded">Return to Courses</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="mt-10 bg-[#1e293b] py-4 text-center">
+        <p class="text-gray-400">&copy; 2024 EngLad. All Rights Reserved.</p>
+    </footer>
+
+    <script src="js/level1.js"></script>
+</body>
+
+</html>

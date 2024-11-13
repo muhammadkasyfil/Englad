@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level 3 Quiz - EngLad</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/level3.css">
+</head>
+<body class="bg-[#0f172a] text-white">
+    <header class="py-4 bg-[#1e293b]">
+        <nav class="container mx-auto flex justify-between items-center px-4">
+            <h1 class="text-2xl font-bold">EngLad</h1>
+            <ul class="flex space-x-4">
+                <li><a href="index.html" class="hover:text-[#FBBF24]">Home</a></li>
+                <li><a href="course.html" class="hover:text-[#FBBF24]">Course</a></li>
+                <li><a href="videos.html" class="hover:text-[#FBBF24]">Videos</a></li>
+                <li><a href="profile.html" class="hover:text-[#FBBF24]">Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container mx-auto mt-10 px-4">
+        <div id="quiz-container" class="bg-[#1e293b] p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold mb-4 text-center">Level 3: Essay</h2>
+            <p class="mb-4 text-center">Write an essay about your favorite hobby:</p>
+            <textarea id="essay-input" class="w-full p-4 mb-4 bg-[#2d3748] text-white rounded-lg"></textarea>
+            <button id="submit-essay" class="bg-[#10B981] hover:bg-[#34D399] text-white font-bold py-2 px-6 rounded">Submit</button>
+        </div>
+        
+        <div id="result-container" class="container mx-auto mt-10 px-4 bg-[#1e293b] p-6 rounded-lg shadow-lg" style="display:none;">
+            <h2 class="text-2xl font-bold mb-4 text-center">Quiz Completed!</h2>
+            <p id="result-text" class="text-center mb-4"></p>
+            <div class="flex justify-center space-x-4">
+                <button id="restart-level3" class="bg-[#F59E0B] hover:bg-[#FBBF24] text-white font-bold py-2 px-6 rounded">Retry Level</button>
+                <button id="go-to-course" class="bg-[#1d4ed8] hover:bg-[#3b82f6] text-white font-bold py-2 px-6 rounded">Go to Course</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="mt-10 bg-[#1e293b] py-4 text-center">
+        <p class="text-gray-400">&copy; 2024 EngLad. All Rights Reserved.</p>
+    </footer>
+
+    <script src="js/level3.js"></script>
+</body>
+</html>

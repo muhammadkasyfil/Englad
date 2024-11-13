@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login or register to access your EngLad profile.">
+    <title>EngLad - Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="bg-gradient-to-r from-blue-400 to-purple-500 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="header-bg py-4">
+        <nav class="navbar container mx-auto flex justify-between items-center px-4 md:px-8">
+            <h1 class="text-2xl text-white font-bold">EngLad</h1>
+            <ul class="hidden md:flex space-x-8 text-white">
+                <li><a href="index.html" class="hover:text-[#FBBF24]">Home</a></li>
+                <li><a href="course.html" class="hover:text-[#FBBF24]">Course</a></li>
+                <li><a href="videos.html" class="hover:text-[#FBBF24]">Videos</a></li>
+                <li><a href="profile.html" class="hover:text-[#FBBF24]">Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center">
+        <div id="auth-container" class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg animated-hover">
+            <div id="auth-section">
+                <h2 class="text-3xl font-bold text-center mb-6">Sign In With</h2>
+                <div class="flex justify-center space-x-4 mb-6">
+                    <button id="google-signin" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md transition">Google</button>
+                </div>
+            </div>
+
+            <!-- Login Form -->
+            <div id="login-form">
+                <h3 class="text-xl font-semibold mb-4">Login</h3>
+                <input type="email" id="login-email" placeholder="Email" class="mb-2 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <input type="password" id="login-password" placeholder="Password" class="mb-4 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <button id="login-button" class="btn-custom bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-md w-full">Sign In</button>
+                <p class="text-sm text-gray-600 mt-4">Not a member? <a href="#" id="show-register" class="text-blue-500 hover:underline">Sign up now</a></p>
+                <div id="login-message" class="text-red-500 mt-2"></div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-form" style="display: none;">
+                <h3 class="text-xl font-semibold mb-4">Register</h3>
+                <input type="email" id="register-email" placeholder="Email" class="mb-2 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                <input type="password" id="register-password" placeholder="Password" class="mb-4 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                <button id="register-button" class="btn-custom bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md w-full">Register</button>
+                <p class="text-sm text-gray-600 mt-4">Already have an account? <a href="#" id="show-login" class="text-green-500 hover:underline">Log in</a></p>
+                <div id="register-message" class="text-red-500 mt-2"></div>
+            </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="p-6 bg-white rounded-lg custom-shadow animated-hover feature-card" id="profile-section" style="display: none;">
+            <h2 class="text-2xl font-bold mb-4">Welcome, <span id="user-email"></span>!</h2>
+            <p class="mb-4">Quiz Progress: Level <span id="quiz-progress"></span></p>
+            <button id="logout-button" class="btn-custom bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md w-full">Logout</button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-bg py-8 mt-auto">
+        <div class="container mx-auto flex flex-col items-center px-4">
+            <div class="text-center mb-4">
+                <h1 class="text-2xl font-bold mb-2">EngLad</h1>
+                <p class="text-[#D1D5DB]">Helping you learn English in an interactive way.</p>
+            </div>
+            <div class="footer-social-icon flex space-x-4">
+                <a href="https://github.com/muhammadkasyfil"><img src="img/github.png" alt="GitHub" class="h-8 w-8"></a>
+                <a href="https://www.instagram.com/muhammadkasyfil"><img src="img/instagram.png" alt="Instagram" class="h-8 w-8"></a>
+                <a href="https://id.linkedin.com/in/muhammad-kasyfil-470a43255"><img src="img/linkedin.png" alt="LinkedIn" class="h-8 w-8"></a>
+            </div>
+            <p class="text-center mt-4 text-[#D1D5DB]">&copy; 2024 EngLad. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Include Firebase and App Scripts -->
+    <!-- <script type="module" src="js/firebase-config.js"></script> -->
+    <script type="module" src="js/auth.js"></script>
+</body>
+
+</html>

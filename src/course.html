@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore different levels of courses to learn English step-by-step.">
+    <title>EngLad - Courses</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="bg-[#EFF6FF] text-[#111827]">
+    <header class="header-bg py-4">
+        <nav class="navbar container mx-auto flex justify-between items-center px-4 md:px-8">
+            <h1 class="text-2xl text-white font-bold">EngLad</h1>
+            <ul class="hidden md:flex space-x-8 text-white">
+                <li><a href="index.html" class="hover:text-[#FBBF24]">Home</a></li>
+                <li><a href="course.html" class="hover:text-[#FBBF24]">Course</a></li>
+                <li><a href="videos.html" class="hover:text-[#FBBF24]">Videos</a></li>
+                <li><a href="profile.html" class="hover:text-[#FBBF24]">Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="section-spacing">
+        <div class="container mx-auto px-4">
+            <h2 class="section-title">Choose Your Course Level</h2>
+            <div class="grid-bg grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="p-6 bg-white rounded-lg custom-shadow scale-on-hover text-center feature-card">
+                    <h3 class="text-xl font-semibold mb-2">Level 1: Beginner</h3>
+                    <p class="text-[#4B5563] mb-4">Start your journey with basic English lessons.</p>
+                    <div class="grid-wrapper">
+                        <a href="level1.html" class="btn-custom bg-[#10B981] hover:bg-[#34D399] text-black font-bold py-2 px-4 rounded">Start Level 1</a>
+                    </div>
+                </div>
+                <div id="level2-container" class="p-6 bg-white rounded-lg custom-shadow scale-on-hover text-center opacity-75 feature-card">
+                    <h3 class="text-xl font-semibold mb-2">Level 2: Intermediate</h3>
+                    <p class="text-[#4B5563] mb-4">Unlock after completing Level 1.</p>
+                    <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
+                        <div class="bg-[#10B981] h-4 rounded-full" style="width: 50%;"></div>
+                    </div>
+                    <div class="grid-wrapper">
+                        <a href="level2.html" id="level2-link" class="btn-custom bg-[#F59E0B] hover:bg-[#FBBF24] text-black font-bold py-2 px-4 rounded cursor-pointer" style="display: none;">Start Level 2</a>
+                    </div>
+                    <button id="level2-locked" class="btn-custom bg-[#F59E0B] hover:bg-[#FBBF24] text-black font-bold py-2 px-4 rounded cursor-not-allowed" disabled>Locked</button>
+                </div>
+                <div id="level3-container" class="p-6 bg-white rounded-lg custom-shadow scale-on-hover text-center opacity-50 feature-card">
+                    <h3 class="text-xl font-semibold mb-2">Level 3: Advanced</h3>
+                    <p class="text-[#4B5563] mb-4">Unlock after completing Level 2.</p>
+                    <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
+                        <div class="bg-[#F59E0B] h-4 rounded-full" style="width: 25%;"></div>
+                    </div>
+                    <div class="grid-wrapper">
+                        <a href="level3.html" id="level3-link" class="btn-custom bg-[#F59E0B] hover:bg-[#FBBF24] text-black font-bold py-2 px-4 rounded cursor-pointer" style="display: none;">Start Level 3</a>
+                    </div>
+                    <button id="level3-locked" class="btn-custom bg-[#F59E0B] hover:bg-[#FBBF24] text-black font-bold py-2 px-4 rounded cursor-not-allowed" disabled>Locked</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer-bg py-8">
+        <div class="container mx-auto flex flex-col items-center px-4">
+            <h1 class="text-2xl font-bold mb-2">EngLad</h1>
+            <p class="text-[#D1D5DB]">Helping you learn English in an interactive way.</p>
+            <div class="footer-social-icon flex space-x-4 mt-4">
+                <a href="https://github.com/muhammadkasyfil"><img src="img/github.png" alt="GitHub" class="h-8 w-8"></a>
+                <a href="https://www.instagram.com/muhammadkasyfil"><img src="img/instagram.png" alt="Instagram" class="h-8 w-8"></a>
+                <a href="https://id.linkedin.com/in/muhammad-kasyfil-470a43255"><img src="img/linkedin.png" alt="LinkedIn" class="h-8 w-8"></a>
+            </div>
+            <p class="text-center mt-4 text-[#D1D5DB]">&copy; 2024 EngLad. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Check user progress from localStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+            if (storedUser) {
+                const progress = storedUser.progress || 0;
+
+                // Unlock levels based on user progress
+                if (progress >= 2) {
+                    document.getElementById('level2-link').style.display = 'block';
+                    document.getElementById('level2-locked').style.display = 'none';
+                    document.getElementById('level2-container').classList.remove('opacity-75');
+                }
+                if (progress >= 3) {
+                    document.getElementById('level3-link').style.display = 'block';
+                    document.getElementById('level3-locked').style.display = 'none';
+                    document.getElementById('level3-container').classList.remove('opacity-50');
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
