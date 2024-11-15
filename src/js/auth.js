@@ -1,3 +1,23 @@
+// Import Firebase SDK
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+
+// Your Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyAo7THPMqq84xmVE6j1o27wwhDTOquRW_U",
+    authDomain: "englad-b3cfd.firebaseapp.com",
+    projectId: "englad-b3cfd",
+    storageBucket: "englad-b3cfd.firebasestorage.app",
+    messagingSenderId: "724125114948",
+    appId: "1:724125114948:web:87ca2d1544ed66d1201211",
+    measurementId: "G-F13YDT22RF"
+  };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
 // DOM Elements
 const authSection = document.getElementById('auth-section');
 const loginForm = document.getElementById('login-form');
@@ -12,7 +32,6 @@ const nextLevelButton = document.createElement('button');
 nextLevelButton.textContent = 'Proceed to Next Level';
 nextLevelButton.className = 'btn-custom bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md mt-4';
 nextLevelButton.addEventListener('click', () => {
-    // Redirect to course.html without updating progress
     window.location.href = 'course.html';
 });
 
@@ -27,54 +46,68 @@ document.getElementById('show-register').addEventListener('click', () => {
     registerForm.style.display = 'block';
 });
 
-// Register a new user (simulated)
+// Google sign-in logic
+document.getElementById('google-signin').addEventListener('click', () => {
+    signInWithPopup(auth, provider)
+        .then(result => {
+            alert(`Welcome, ${result.user.email}`);
+            showUserProfile(result.user);
+        })
+        .catch(error => {
+            alert('Error during Google sign-in: ' + error.message);
+        });
+});
+
+// Register a new user
 document.getElementById('register-button').addEventListener('click', () => {
     const email = document.getElementById('register-email').value;
     const password = document.getElementById('register-password').value;
 
     if (email && password) {
-        const userData = { email, password, progress: 0 };
-        localStorage.setItem('user', JSON.stringify(userData));
-        alert('User registered successfully!');
-        registerForm.style.display = 'none';
-        authSection.style.display = 'none'; // Hide auth section after registration
-        showUserProfile(userData);
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(userCredential => {
+                alert('User registered successfully!');
+                registerForm.style.display = 'none';
+                authSection.style.display = 'none';
+                showUserProfile({ email: userCredential.user.email, progress: 0 });
+            })
+            .catch(error => {
+                alert('Error: ' + error.message);
+            });
     } else {
         alert('Please fill in both fields.');
     }
 });
 
-// Log in an existing user (simulated)
+// Log in an existing user
 document.getElementById('login-button').addEventListener('click', () => {
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
 
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-
-    if (storedUser && storedUser.email === email && storedUser.password === password) {
-        alert('Logged in successfully!');
-        loginForm.style.display = 'none';
-        authSection.style.display = 'none'; // Hide auth section after login
-        showUserProfile(storedUser);
-    } else {
-        alert('Invalid email or password.');
-    }
+    signInWithEmailAndPassword(auth, email, password)
+        .then(userCredential => {
+            alert('Logged in successfully!');
+            loginForm.style.display = 'none';
+            authSection.style.display = 'none';
+            showUserProfile({ email: userCredential.user.email, progress: 0 });
+        })
+        .catch(error => {
+            alert('Error: ' + error.message);
+        });
 });
 
 // Show user profile and progress
 function showUserProfile(user) {
-    authContainer.style.display = 'none'; // Hide the auth container
+    authContainer.style.display = 'none';
     userEmailElement.textContent = user.email;
-    quizProgressElement.textContent = user.progress;
+    quizProgressElement.textContent = user.progress; // Adjust as needed to fetch real progress
     profileSection.style.display = 'block';
 
-    // Check if the user can still progress to the next level
-    if (user.progress < 3) { 
+    if (user.progress < 3) {
         if (!profileSection.contains(nextLevelButton)) {
             profileSection.appendChild(nextLevelButton);
         }
     } else {
-        // Remove the next level button if the user has reached the final level
         if (profileSection.contains(nextLevelButton)) {
             profileSection.removeChild(nextLevelButton);
         }
@@ -87,19 +120,30 @@ function showUserProfile(user) {
 
 // Log out the user
 document.getElementById('logout-button').addEventListener('click', () => {
-    localStorage.removeItem('user');
-    alert('Logged out successfully!');
-    profileSection.style.display = 'none';
-    authContainer.style.display = 'block'; // Show the auth container after logout
-    loginForm.style.display = 'block';
+    signOut(auth)
+        .then(() => {
+            alert('Logged out successfully!');
+            profileSection.style.display = 'none';
+            authContainer.style.display = 'block'; // Show the auth container after logout
+            loginForm.style.display = 'block'; // Ensure the login form is visible
+            document.getElementById('auth-section').style.display = 'block'; // Show the Google sign-in button
+        })
+        .catch(error => {
+            alert('Error: ' + error.message);
+        });
 });
 
 // Check if the user is already logged in when the page loads
 window.onload = () => {
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (storedUser) {
-        loginForm.style.display = 'none';
-        authContainer.style.display = 'none'; // Hide the auth container if the user is logged in
-        showUserProfile(storedUser);
-    }
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            loginForm.style.display = 'none';
+            authContainer.style.display = 'none';
+            showUserProfile({ email: user.email, progress: 0 }); // Adjust if needed
+        } else {
+            authContainer.style.display = 'block';
+            document.getElementById('auth-section').style.display = 'block'; // Show the auth section by default
+            profileSection.style.display = 'none';
+        }
+    });
 };
