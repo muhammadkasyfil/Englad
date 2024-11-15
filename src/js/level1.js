@@ -1,55 +1,28 @@
-// Quiz data
-const questionsLevel1 = [
-    {
-        question: "Choose the correct word to complete the sentence: I _____ to the park yesterday",
-        answers: [
-            { text: 'Go', correct: false },
-            { text: 'Going', correct: false },
-            { text: 'Went', correct: true },
-            { text: 'Gone', correct: false }
-        ]
-    },
-    {
-        question: "Which of these is a fruit?",
-        answers: [
-            { text: 'Chair', correct: false },
-            { text: 'Apple', correct: true },
-            { text: 'Dog', correct: false },
-            { text: 'Car', correct: false }
-        ]
-    },
-    {
-        question: "Which is the correct sentence?",
-        answers: [
-            { text: 'She is a teacher.', correct: true },
-            { text: 'She are a teacher.', correct: false },
-            { text: 'She am a teacher.', correct: false },
-            { text: 'She be a teacher.', correct: false }
-        ]
-    },
-    {
-        question: "Which element has the chemical symbol 'O'?",
-        answers: [
-            { text: 'Oxygen', correct: true },
-            { text: 'Hydrogen', correct: false },
-            { text: 'Gold', correct: false },
-            { text: 'Silver', correct: false }
-        ]
-    },
-    {
-        question: "Choose the correct plural form: One cat, two ____. ",
-        answers: [
-            { text: 'cats', correct: true },
-            { text: 'cates', correct: false },
-            { text: 'cat', correct: false },
-            { text: 'catses', correct: false }
-        ]
-    }
-];
+// Import Firebase SDK
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyAo7THPMqq84xmVE6j1o27wwhDTOquRW_U",
+    authDomain: "englad-b3cfd.firebaseapp.com",
+    projectId: "englad-b3cfd",
+    storageBucket: "englad-b3cfd.firebasestorage.app",
+    messagingSenderId: "724125114948",
+    appId: "1:724125114948:web:87ca2d1544ed66d1201211",
+    measurementId: "G-F13YDT22RF"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// Global variables for Level 1
 let currentQuestionIndex = 0;
 let correctAnswers = 0;
-const totalQuestions = questionsLevel1.length;
+let questionsLevel1 = [];
 const progressBar = document.getElementById('progress-bar');
 const questionElement = document.getElementById('question');
 const answerButtons = document.getElementById('answer-buttons');
@@ -57,6 +30,8 @@ const submitButton = document.getElementById('submit-btn');
 const nextButtonContainer = document.getElementById('next-button-container');
 const resultContainer = document.getElementById('result-container');
 const resultText = document.getElementById('result-text');
+const restartButton = document.getElementById('restart-level');
+const goToCourseButton = document.getElementById('go-to-course');
 let selectedButton = null;
 
 // Create the "Next" button
@@ -66,13 +41,33 @@ nextButton.classList.add('mt-4', 'bg-[#3b82f6]', 'hover:bg-[#60a5fa]', 'text-whi
 nextButton.style.display = 'none';
 nextButton.addEventListener('click', () => {
     currentQuestionIndex++;
-    if (currentQuestionIndex < totalQuestions) {
+    if (currentQuestionIndex < questionsLevel1.length) {
         loadQuestion();
     } else {
         showResults();
     }
 });
 nextButtonContainer.appendChild(nextButton);
+
+// Load quiz data from Firestore
+async function fetchQuizData() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "quizQuestionsLevel1"));
+        questionsLevel1 = querySnapshot.docs.map(doc => ({
+            question: doc.data().question,
+            answers: doc.data().answers
+        }));
+
+        if (questionsLevel1.length > 0) {
+            loadQuestion();
+        } else {
+            alert('No quiz data found.');
+        }
+    } catch (error) {
+        console.error('Error fetching quiz data:', error);
+        alert('Failed to load quiz data. Please try again later.');
+    }
+}
 
 function loadQuestion() {
     resetState();
@@ -86,7 +81,7 @@ function loadQuestion() {
         button.dataset.correct = answer.correct;
         button.addEventListener('click', () => {
             selectAnswer(button);
-            submitButton.disabled = false; // Enable the submit button when an answer is selected
+            submitButton.disabled = false;
         });
         answerButtons.appendChild(button);
     });
@@ -95,7 +90,7 @@ function loadQuestion() {
     submitButton.style.display = 'block';
     nextButton.style.display = 'none';
     selectedButton = null;
-    submitButton.disabled = true; // Disable the submit button initially
+    submitButton.disabled = true;
 }
 
 function selectAnswer(button) {
@@ -121,7 +116,7 @@ submitButton.addEventListener('click', () => {
 
         submitButton.style.display = 'none';
         nextButton.style.display = 'block';
-        nextButtonContainer.style.display = 'block'; // Ensure the container is shown
+        nextButtonContainer.style.display = 'block';
 
         if (correct) {
             correctAnswers++;
@@ -138,11 +133,11 @@ function resetState() {
     selectedButton = null;
     submitButton.style.display = 'block';
     nextButton.style.display = 'none';
-    nextButtonContainer.style.display = 'none'; // Hide the container initially
+    nextButtonContainer.style.display = 'none';
 }
 
 function updateProgressBar() {
-    const progressPercentage = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+    const progressPercentage = ((currentQuestionIndex + 1) / questionsLevel1.length) * 100;
     progressBar.style.width = progressPercentage + '%';
 }
 
@@ -152,21 +147,51 @@ function showResults() {
     submitButton.style.display = 'none';
     nextButton.style.display = 'none';
     resultContainer.style.display = 'block';
-    resultText.innerText = `You answered ${correctAnswers} out of ${totalQuestions} questions correctly.`;
+    resultText.innerText = `You answered ${correctAnswers} out of ${questionsLevel1.length} questions correctly.`;
 
-    // Update user's progress if they completed the level
-    if (correctAnswers >= (totalQuestions * 0.6)) { // Set a passing threshold, e.g., 60%
-        updateQuizProgress(2); // Update to the next level
+    progressBar.style.display = 'none';
+
+    // Only update the user's progress if they are not at Level 3
+    updateQuizProgress(2); // Update to the next level
+}
+
+async function updateQuizProgress(level) {
+    const user = auth.currentUser;
+    if (user) {
+        const userRef = doc(db, "users", user.uid);
+        try {
+            const userDoc = await getDoc(userRef);
+            const userData = userDoc.data();
+
+            // Check if the user is already at or above the desired level
+            if (userData.progress < level) {
+                await setDoc(userRef, { progress: level }, { merge: true });
+                alert(`Progress updated to Level ${level}!`);
+            }
+        } catch (error) {
+            console.error('Error updating progress:', error);
+            alert('Failed to update progress. Please try again later.');
+        }
     } else {
-        alert("Try again to advance to the next level.");
+        alert("User not authenticated.");
     }
 }
 
+// Check if the user is already logged in and load data
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        fetchQuizData();
+    } else {
+        alert('User is not authenticated. Please log in to take the quiz.');
+    }
+});
+
+// Add event listeners for retry and navigation buttons
 function restartLevel() {
     currentQuestionIndex = 0;
     correctAnswers = 0;
-    questionElement.style.display = 'block';
-    answerButtons.style.display = 'block';
+    progressBar.style.display = 'block'; // Show the progress bar again
+    progressBar.style.width = '0%'; // Reset progress bar to 0%
     resultContainer.style.display = 'none';
     loadQuestion();
 }
@@ -175,14 +200,5 @@ function goToCoursePage() {
     window.location.href = 'course.html';
 }
 
-function updateQuizProgress(level) {
-    let storedUser = JSON.parse(localStorage.getItem('user'));
-    if (storedUser) {
-        storedUser.progress = level; // Update progress in localStorage
-        localStorage.setItem('user', JSON.stringify(storedUser));
-        alert(`Progress updated to Level ${level}!`);
-    }
-}
-
-// Initial load of the quiz
-loadQuestion();
+restartButton.addEventListener('click', restartLevel);
+goToCourseButton.addEventListener('click', goToCoursePage);

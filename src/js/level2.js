@@ -1,30 +1,28 @@
-// Quiz data for Level 2
-const questionsLevel2 = [
-    {
-        question: "What is the capital of France?",
-        options: ["Paris", "Rome", "Berlin", "Madrid"],
-        correctAnswer: "Paris"
-    },
-    {
-        question: "They _____ to the cinema last week",
-        options: ["go", "goes", "went", "going"],
-        correctAnswer: "went"
-    },
-    {
-        question: "What is the opposite of 'expensive'?",
-        options: ["cheap", "big", "slow", "beautiful"],
-        correctAnswer: "cheap"
-    },
-    {
-        question: "If it rains tomorrow, we _____ stay at home.",
-        options: ["will", "would", "were", "was"],
-        correctAnswer: "will"
-    }
-];
+// Import Firebase SDK
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+
+// Your Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyAo7THPMqq84xmVE6j1o27wwhDTOquRW_U",
+    authDomain: "englad-b3cfd.firebaseapp.com",
+    projectId: "englad-b3cfd",
+    storageBucket: "englad-b3cfd.firebasestorage.app",
+    messagingSenderId: "724125114948",
+    appId: "1:724125114948:web:87ca2d1544ed66d1201211",
+    measurementId: "G-F13YDT22RF"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
 // Global variables for Level 2
 let currentDragQuestionIndex = 0;
 let correctDragAnswers = 0;
+let questionsLevel2 = [];
 const totalDragQuestions = questionsLevel2.length;
 const dragProgressBar = document.getElementById('progress-bar');
 const dragResultContainer = document.getElementById('result-container');
@@ -35,9 +33,30 @@ const questionElement = document.getElementById('question');
 const restartButton = document.getElementById('restart-level');
 const goToCourseButton = document.getElementById('go-to-course');
 
+// Load quiz data from Firestore for Level 2
+async function fetchQuizData() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "quizQuestionsLevel2"));
+        questionsLevel2 = querySnapshot.docs.map(doc => ({
+            question: doc.data().question,
+            options: doc.data().options,
+            correctAnswer: doc.data().correctAnswer
+        }));
+
+        if (questionsLevel2.length > 0) {
+            loadDragQuestion();
+        } else {
+            alert('No quiz data found.');
+        }
+    } catch (error) {
+        console.error('Error fetching quiz data:', error);
+        alert('Failed to load quiz data. Please try again later.');
+    }
+}
+
 // Load the next drag-and-drop question
 function loadDragQuestion() {
-    if (currentDragQuestionIndex >= totalDragQuestions) {
+    if (currentDragQuestionIndex >= questionsLevel2.length) {
         showDragResults();
         return;
     }
@@ -48,7 +67,7 @@ function loadDragQuestion() {
 
     currentDragQuestion.options.forEach(option => {
         const dragItem = document.createElement('div');
-        dragItem.classList.add('drag-item');
+        dragItem.classList.add('drag-item', 'bg-[#1e40af]', 'text-white', 'py-2', 'px-4', 'rounded', 'cursor-move', 'mb-2');
         dragItem.innerText = option;
         dragItem.draggable = true;
         dragItem.dataset.correct = option === currentDragQuestion.correctAnswer;
@@ -82,7 +101,7 @@ function handleDrop(e) {
 
     setTimeout(() => {
         currentDragQuestionIndex++;
-        if (currentDragQuestionIndex < totalDragQuestions) {
+        if (currentDragQuestionIndex < questionsLevel2.length) {
             loadDragQuestion();
         } else {
             showDragResults();
@@ -94,11 +113,12 @@ function handleDrop(e) {
 function resetDragState() {
     dragOptionsContainer.innerHTML = '';
     dropArea.style.backgroundColor = '#1e293b'; // Reset to default color
+    dropArea.innerText = 'Drop your answer here'; // Reset text
 }
 
 // Update progress bar
 function updateDragProgressBar() {
-    const progressPercentage = ((currentDragQuestionIndex + 1) / totalDragQuestions) * 100;
+    const progressPercentage = ((currentDragQuestionIndex + 1) / questionsLevel2.length) * 100;
     dragProgressBar.style.width = progressPercentage + '%';
 }
 
@@ -106,10 +126,10 @@ function updateDragProgressBar() {
 function showDragResults() {
     document.querySelector('main').style.display = 'none';
     dragResultContainer.style.display = 'block';
-    dragResultText.innerText = `You answered ${correctDragAnswers} out of ${totalDragQuestions} correctly.`;
+    dragResultText.innerText = `You answered ${correctDragAnswers} out of ${questionsLevel2.length} correctly.`;
 
     // Update user's progress if they completed the level successfully
-    if (correctDragAnswers >= (totalDragQuestions * 0.6)) { // Set a passing threshold, e.g., 60%
+    if (correctDragAnswers >= (questionsLevel2.length * 0.6)) { // Set a passing threshold, e.g., 60%
         updateQuizProgress(3); // Update to the next level (assume 3 is the next)
     } else {
         alert("Try again to advance to the next level.");
@@ -130,22 +150,31 @@ function goToTryCourse() {
     window.location.href = 'course.html';
 }
 
-// Update quiz progress in localStorage
-function updateQuizProgress(level) {
-    let storedUser = JSON.parse(localStorage.getItem('user'));
-    if (storedUser) {
-        if (storedUser.progress < level) { // Only update if progressing to a higher level
-            storedUser.progress = level;
-            localStorage.setItem('user', JSON.stringify(storedUser));
+// Update quiz progress in Firestore for authenticated users
+async function updateQuizProgress(level) {
+    const user = auth.currentUser;
+    if (user) {
+        const userRef = doc(db, "users", user.uid);
+        try {
+            await setDoc(userRef, { progress: level }, { merge: true });
             alert(`Progress updated to Level ${level}!`);
+        } catch (error) {
+            console.error('Error updating progress:', error);
+            alert('Failed to update progress. Please try again later.');
         }
+    } else {
+        alert("User not authenticated.");
     }
 }
 
-// Start the drag-and-drop quiz on page load
-window.onload = () => {
-    loadDragQuestion();
-};
+// Start the drag-and-drop quiz on page load if the user is authenticated
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        fetchQuizData();
+    } else {
+        alert('User is not authenticated. Please log in to access Level 2.');
+    }
+});
 
 // Attach dragover and drop event listeners to the drop area
 dropArea.addEventListener('dragover', handleDragOver);

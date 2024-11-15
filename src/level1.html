@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Level 1 Quiz Page - EngLad">
     <title>Level 1 Quiz - EngLad</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/level1.css">
@@ -39,9 +38,10 @@
                 <!-- Next button will be dynamically added by the JS -->
             </div>
             <div id="result-container" class="mt-6" style="display: none;">
+                <h2 class="text-2xl font-bold mb-4 text-center">Quiz Completed!</h2>
                 <h3 id="result-text" class="text-2xl font-bold mb-4"></h3>
-                <button onclick="restartLevel()" class="bg-[#F59E0B] hover:bg-[#FBBF24] text-white font-bold py-2 px-6 rounded">Retry</button>
-                <button onclick="goToCoursePage()" class="mt-4 bg-[#1d4ed8] hover:bg-[#3b82f6] text-white font-bold py-2 px-6 rounded">Return to Courses</button>
+                <button id="restart-level" class="bg-[#F59E0B] hover:bg-[#FBBF24] text-white font-bold py-2 px-6 rounded">Retry Level</button>
+                <button id="go-to-course" class="bg-[#1d4ed8] hover:bg-[#3b82f6] text-white font-bold py-2 px-6 rounded">Go to Course</button>
             </div>
         </div>
     </main>
@@ -50,7 +50,7 @@
         <p class="text-gray-400">&copy; 2024 EngLad. All Rights Reserved.</p>
     </footer>
 
-    <script src="js/level1.js"></script>
+    <script type="module" src="js/level1.js"></script>
 </body>
 
 </html>

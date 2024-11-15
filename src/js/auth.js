@@ -1,6 +1,7 @@
 // Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
 // Your Firebase configuration
 const firebaseConfig = {
@@ -11,10 +12,11 @@ const firebaseConfig = {
     messagingSenderId: "724125114948",
     appId: "1:724125114948:web:87ca2d1544ed66d1201211",
     measurementId: "G-F13YDT22RF"
-  };
+};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
@@ -49,9 +51,9 @@ document.getElementById('show-register').addEventListener('click', () => {
 // Google sign-in logic
 document.getElementById('google-signin').addEventListener('click', () => {
     signInWithPopup(auth, provider)
-        .then(result => {
+        .then(async (result) => {
             alert(`Welcome, ${result.user.email}`);
-            showUserProfile(result.user);
+            await fetchAndDisplayUserProfile(result.user);
         })
         .catch(error => {
             alert('Error during Google sign-in: ' + error.message);
@@ -65,11 +67,15 @@ document.getElementById('register-button').addEventListener('click', () => {
 
     if (email && password) {
         createUserWithEmailAndPassword(auth, email, password)
-            .then(userCredential => {
+            .then(async (userCredential) => {
+                // Save initial progress for new user
+                const userRef = doc(db, "users", userCredential.user.uid);
+                await setDoc(userRef, { progress: 0 });
+
                 alert('User registered successfully!');
                 registerForm.style.display = 'none';
                 authSection.style.display = 'none';
-                showUserProfile({ email: userCredential.user.email, progress: 0 });
+                await fetchAndDisplayUserProfile(userCredential.user);
             })
             .catch(error => {
                 alert('Error: ' + error.message);
@@ -85,11 +91,11 @@ document.getElementById('login-button').addEventListener('click', () => {
     const password = document.getElementById('login-password').value;
 
     signInWithEmailAndPassword(auth, email, password)
-        .then(userCredential => {
+        .then(async (userCredential) => {
             alert('Logged in successfully!');
             loginForm.style.display = 'none';
             authSection.style.display = 'none';
-            showUserProfile({ email: userCredential.user.email, progress: 0 });
+            await fetchAndDisplayUserProfile(userCredential.user);
         })
         .catch(error => {
             alert('Error: ' + error.message);
@@ -97,24 +103,40 @@ document.getElementById('login-button').addEventListener('click', () => {
 });
 
 // Show user profile and progress
-function showUserProfile(user) {
-    authContainer.style.display = 'none';
-    userEmailElement.textContent = user.email;
-    quizProgressElement.textContent = user.progress; // Adjust as needed to fetch real progress
-    profileSection.style.display = 'block';
+async function fetchAndDisplayUserProfile(user) {
+    try {
+        const userRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userRef);
 
-    if (user.progress < 3) {
-        if (!profileSection.contains(nextLevelButton)) {
-            profileSection.appendChild(nextLevelButton);
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            authContainer.style.display = 'none';
+            userEmailElement.textContent = user.email;
+            quizProgressElement.textContent = userData.progress || 0; // Default to 0 if not set
+            profileSection.style.display = 'block';
+
+            if (userData.progress < 3) {
+                if (!profileSection.contains(nextLevelButton)) {
+                    profileSection.appendChild(nextLevelButton);
+                }
+            } else {
+                if (profileSection.contains(nextLevelButton)) {
+                    profileSection.removeChild(nextLevelButton);
+                }
+                const maxLevelMessage = document.createElement('p');
+                maxLevelMessage.textContent = 'You have completed all levels!';
+                maxLevelMessage.className = 'mt-4 text-green-500';
+                profileSection.appendChild(maxLevelMessage);
+            }
+            
+        } else {
+            alert("User profile data not found. Initializing data...");
+            await setDoc(userRef, { progress: 0 }); // Create initial data if not found
+            quizProgressElement.textContent = 0;
         }
-    } else {
-        if (profileSection.contains(nextLevelButton)) {
-            profileSection.removeChild(nextLevelButton);
-        }
-        const maxLevelMessage = document.createElement('p');
-        maxLevelMessage.textContent = 'You have completed all levels!';
-        maxLevelMessage.className = 'mt-4 text-green-500';
-        profileSection.appendChild(maxLevelMessage);
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        alert('Failed to load user profile data.');
     }
 }
 
@@ -135,11 +157,11 @@ document.getElementById('logout-button').addEventListener('click', () => {
 
 // Check if the user is already logged in when the page loads
 window.onload = () => {
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
         if (user) {
             loginForm.style.display = 'none';
             authContainer.style.display = 'none';
-            showUserProfile({ email: user.email, progress: 0 }); // Adjust if needed
+            await fetchAndDisplayUserProfile(user);
         } else {
             authContainer.style.display = 'block';
             document.getElementById('auth-section').style.display = 'block'; // Show the auth section by default

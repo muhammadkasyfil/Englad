@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/level3.css">
 </head>
+
 <body class="bg-[#0f172a] text-white">
     <header class="py-4 bg-[#1e293b]">
         <nav class="container mx-auto flex justify-between items-center px-4">
@@ -24,7 +26,8 @@
         <div id="quiz-container" class="bg-[#1e293b] p-6 rounded-lg shadow-lg">
             <h2 class="text-2xl font-bold mb-4 text-center">Level 3: Essay</h2>
             <p class="mb-4 text-center">Write an essay about your favorite hobby:</p>
-            <textarea id="essay-input" class="w-full p-4 mb-4 bg-[#2d3748] text-white rounded-lg"></textarea>
+            <label for="essay-input" class="sr-only">Essay Input</label>
+            <textarea id="essay-input" class="w-full p-4 mb-4 bg-[#2d3748] text-white rounded-lg" placeholder="Write your essay here..."></textarea>
             <button id="submit-essay" class="bg-[#10B981] hover:bg-[#34D399] text-white font-bold py-2 px-6 rounded">Submit</button>
         </div>
         
@@ -42,6 +45,7 @@
         <p class="text-gray-400">&copy; 2024 EngLad. All Rights Reserved.</p>
     </footer>
 
-    <script src="js/level3.js"></script>
+    <script type="module" src="js/level3.js"></script>
 </body>
+
 </html>

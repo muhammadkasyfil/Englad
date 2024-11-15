@@ -8,6 +8,63 @@
     <title>EngLad - Courses</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
+    <script type="module">
+        // Import Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAo7THPMqq84xmVE6j1o27wwhDTOquRW_U",
+            authDomain: "englad-b3cfd.firebaseapp.com",
+            projectId: "englad-b3cfd",
+            storageBucket: "englad-b3cfd.firebasestorage.app",
+            messagingSenderId: "724125114948",
+            appId: "1:724125114948:web:87ca2d1544ed66d1201211",
+            measurementId: "G-F13YDT22RF"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Check user progress from Firestore
+        document.addEventListener('DOMContentLoaded', () => {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    try {
+                        const userRef = doc(db, "users", user.uid);
+                        const userDoc = await getDoc(userRef);
+
+                        if (userDoc.exists()) {
+                            const userData = userDoc.data();
+                            const progress = userData.progress || 0;
+
+                            // Unlock levels based on user progress
+                            if (progress >= 2) {
+                                document.getElementById('level2-link').style.display = 'block';
+                                document.getElementById('level2-locked').style.display = 'none';
+                                document.getElementById('level2-container').classList.remove('opacity-75');
+                            }
+                            if (progress >= 3) {
+                                document.getElementById('level3-link').style.display = 'block';
+                                document.getElementById('level3-locked').style.display = 'none';
+                                document.getElementById('level3-container').classList.remove('opacity-50');
+                            }
+                        } else {
+                            console.error('No user data found.');
+                        }
+                    } catch (error) {
+                        console.error('Error fetching user progress:', error);
+                    }
+                } else {
+                    alert('Please log in to access your course progress.');
+                }
+            });
+        });
+    </script>
 </head>
 
 <body class="bg-[#EFF6FF] text-[#111827]">
@@ -72,28 +129,6 @@
             <p class="text-center mt-4 text-[#D1D5DB]">&copy; 2024 EngLad. All Rights Reserved.</p>
         </div>
     </footer>
-
-    <script>
-        // Check user progress from localStorage
-        document.addEventListener('DOMContentLoaded', () => {
-            const storedUser = JSON.parse(localStorage.getItem('user'));
-            if (storedUser) {
-                const progress = storedUser.progress || 0;
-
-                // Unlock levels based on user progress
-                if (progress >= 2) {
-                    document.getElementById('level2-link').style.display = 'block';
-                    document.getElementById('level2-locked').style.display = 'none';
-                    document.getElementById('level2-container').classList.remove('opacity-75');
-                }
-                if (progress >= 3) {
-                    document.getElementById('level3-link').style.display = 'block';
-                    document.getElementById('level3-locked').style.display = 'none';
-                    document.getElementById('level3-container').classList.remove('opacity-50');
-                }
-            }
-        });
-    </script>
 </body>
 
 </html>
